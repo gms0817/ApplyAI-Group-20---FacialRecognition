@@ -3,13 +3,6 @@ import tkinter as tk
 from tkinter import filedialog
 from PIL import ImageTk, Image
 
-
-if __name__ == '__main__':
-    print('Launching program.')
-    app = FacialRecognition()
-
-    # Load dataset
-    app.load_dataset()
     
 class App(tk.Frame):
     def __init__(self, master=None):
@@ -46,3 +39,7 @@ class App(tk.Frame):
     def submit_image(self):
         #upload to database??
         pass
+
+if __name__ == '__main__':
+    print('Launching program.')
+    App()
