@@ -8,9 +8,8 @@ from numpy import fliplr, flipud
 
 class FacialRecognition:
     def __init__(self):
-        self.dataset_path = './test_set'
-        self.seen_files = []
-        self.photo_cap = 20
+        self.dataset_path = './test_dataset'
+        self.photo_cap = 100
         self.num_of_pics = 0  # Track pics across single directory
         self.total_pics = 0  # Track total pics across all directories
 
@@ -19,36 +18,35 @@ class FacialRecognition:
         print('Starting Image Pre-Processing...')
 
         # Load images recursively from directory
-        for subdir, dirs, files in os.walk(self.dataset_path):  # Iterate through folders
+        for subdir, dirs, files in os.walk(self.dataset_path):
+            self.num_of_pics = len(files)  # get initial number of files
+
+            # Increment total num of pics
+            self.total_pics = self.total_pics + self.num_of_pics
+
             for file in files:
-                self.num_of_pics = len(files)  # get initial number of files
-                print(f'Number of Files at Start: {self.num_of_pics} | subdir: {subdir} | dirs: {dirs}')
-                if self.num_of_pics < self.photo_cap:
-                    file_type = file[-4:]  # Extract the file type
-                    aug_count = 0  # Reset augmentation count
+                filetype = file[-4:]
+                if filetype == '.jpg':
+
+                    # Read the image from the file as grayscale
+                    im = io.imread(os.path.join(subdir, file), as_gray=True)
+
+                    # augment pics as needed
+                    aug_count = 0
                     while self.num_of_pics < self.photo_cap:
                         aug_count = aug_count + 1  # Increment augmentation count
-                        self.seen_files.clear()  # Reset seen list as needed to continue augmentation
-                        if file_type == '.jpg' and self.num_of_pics < self.photo_cap:
-                            # Only augment pictures if under photo cap
-                            self.seen_files.append(file)  # Add current file to seen files list
-                            self.total_pics = self.total_pics + 1
-                            # Provide update to terminal
-                            print(f'Number of Pictures: {self.num_of_pics} - {os.path.join(subdir, file)}')
 
-                            # Read the image from the file as grayscale
-                            im = io.imread(os.path.join(subdir, file), as_gray=True)
-
-                            # Create augmented photos based on need
-                            self.augment_image(im, subdir, file, aug_count)
+                        # Augment the image
+                        self.augment_image(im, subdir, file, aug_count)
+            print(f'Number of Pics in {subdir}: {self.num_of_pics}')
 
         # Print final total number of pics
         print(f'New Dataset Size: {self.total_pics}')
-
         print('Finished Image Pre-Processing.')
 
     def augment_image(self, im, subdir, file, aug_count):
         print('Reached augment_images()')
+
         # Randomly rotate image
         random_angle = random.randint(-90, 90)
         if self.num_of_pics < self.photo_cap:
@@ -61,7 +59,6 @@ class FacialRecognition:
                 self.num_of_pics = self.num_of_pics + 1
                 self.total_pics = self.total_pics + 1
 
-            self.seen_files.append(filepath)  # Update the seen files list
             print(f'Number of Pictures: {self.num_of_pics} - {os.path.join(subdir, filepath)}')
 
         # Adjust brightness based on random gamma value
@@ -78,7 +75,6 @@ class FacialRecognition:
                 self.num_of_pics = self.num_of_pics + 1
                 self.total_pics = self.total_pics + 1
 
-            self.seen_files.append(ex_filepath)  # Update the seen files list
             print(f'Number of Pictures: {self.num_of_pics} - {os.path.join(subdir, ex_filepath)}')
 
         # Flip image horizontally
@@ -94,7 +90,6 @@ class FacialRecognition:
                 self.num_of_pics = self.num_of_pics + 1
                 self.total_pics = self.total_pics + 1
 
-            self.seen_files.append(hor_filepath)  # Update the seen files list
             print(f'Number of Pictures: {self.num_of_pics} - {os.path.join(subdir, hor_filepath)}')
 
         # Flip image vertically
@@ -110,7 +105,6 @@ class FacialRecognition:
                 self.num_of_pics = self.num_of_pics + 1
                 self.total_pics = self.total_pics + 1
 
-            self.seen_files.append(ver_filepath)  # Update the seen files list
             print(f'Number of Pictures: {self.num_of_pics} - {os.path.join(subdir, ver_filepath)}')
 
 
