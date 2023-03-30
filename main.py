@@ -9,11 +9,11 @@ from numpy import fliplr, flipud
 
 class FacialRecognition:
     def __init__(self):
-        self.dataset_path = './test_dataset/'
+        self.dataset_path = './lfw_dataset/'
         self.photo_cap = 100
         self.num_of_pics = 0  # Track pics across single directory
         self.total_pics = 0  # Track total pics across all directories
-        self.color_mode = 'grayscale'
+        self.color_mode = 'rgb'
 
     def load_dataset(self):
         print('Reached process_images()')
@@ -51,13 +51,12 @@ class FacialRecognition:
                         io.imsave(filepath, im)
                         self.num_of_pics = self.num_of_pics + 1
 
-
                     elif self.color_mode == 'rgb':
                         # Read the image from the file as grayscale
                         im = io.imread(os.path.join(subdir, file), as_gray=False)
 
                         # Remove old version of file
-                        os.remove(file)
+                        os.remove(os.path.join(subdir, file))
                         self.num_of_pics = self.num_of_pics - 1
 
                         # extract root filename from subdir
@@ -87,7 +86,7 @@ class FacialRecognition:
         print(f'New Dataset Size: {self.total_pics}')
         print('Finished Image Pre-Processing.')
 
-    def augment_image(self, im, subdir,):
+    def augment_image(self, im, subdir, ):
         # extract root filename from subdir
         root_filename = subdir[subdir.rindex('/') + 1:]
 
@@ -164,7 +163,6 @@ class FacialRecognition:
 
                 # Save the vertically flipped im
                 io.imsave(filepath, ver_im)
-
 
             print(f'Number of Pictures: {self.num_of_pics} - {os.path.join(subdir, filepath)}')
 
