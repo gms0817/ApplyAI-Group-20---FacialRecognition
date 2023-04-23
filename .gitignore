@@ -1,2 +1,6 @@
 /lfw_dataset/
 /test_dataset/
+/50_overfit_lfw_dataset/
+/large_lfw_dataset/
+/_smaller_datasets/
+/lfw_dataset.zip
